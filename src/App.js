@@ -7,50 +7,45 @@ function App() {
 
   const [allChecked, setAllChecked] = useState(false);
   const [checkedValues, setCheckedValues] = useState([]);
-  const [kosherChecked, setKosherChecked] = useState(false);
-  const [eggsChecked, setEggsChecked] = useState(false);
-  const [dairyChecked, setDairyChecked] = useState(false);
+  const [checked, setChecked] = useState(false);
   
-  const itemList = [ "Kosher", "No Eggs", "No Dairy"]
+  const itemList = [ 
+    {id:"0",value: "Kosher"},
+    {id:"1", value:"No Eggs"},
+    {id:"2", value:"No Dairy"}
+  ];
 
   const handleAllChange = () => {
-    // allChecked === false ? () =>
-    setAllChecked(!allChecked)
-    setKosherChecked(!kosherChecked);
-    setEggsChecked(!eggsChecked);
-    setDairyChecked(!dairyChecked)
+    setAllChecked(!allChecked);
+    setCheckedValues(itemList.map(item => item.value))
+    setChecked(!checked)
+    if (allChecked) {
+      setCheckedValues([]);
+    }
 };
 
   const checkHandler = (event) => {
-    const targetLabel = event.target.label
-    const targetChecked = event.target.checked
-    if (targetChecked) {
-      setCheckedValues([...checkedValues, targetLabel])
+    const {id, checked, key, placeholder} = event.target;
+    console.log(placeholder)
+    if (checkedValues.length === 2 && checked) {
+      setAllChecked(true)
+    }
+    setCheckedValues([...checkedValues, placeholder])
+    if(!checked){
+     setAllChecked(false);
+     setCheckedValues(checkedValues.filter(item => item !== placeholder)) 
     }
   }
-  const handleKosherChange = () => {
-    setKosherChecked(!kosherChecked);
-  };
 
-  const handleEggsChange = () => {
-    setEggsChecked(!eggsChecked);
-  };
-  const handleDairyChange = () => {
-    setDairyChecked(!dairyChecked);
-  };
-
-  
   return (
     <> 
-    <div> Selected Value: {checkedValues.map(value => 
-    value
-    )}</div>
-      <FormGroup className='App'> 
-      <FormControlLabel className='checkBox' control={<Checkbox onClick={handleAllChange} size='large'/>} label="Select All"/>
-      <FormControlLabel className='checkBox' control={<Checkbox onChange={checkHandler} onClick={handleKosherChange} checked={kosherChecked} size='large'/>} label="Kosher"/>
-      <FormControlLabel className='checkBox' control={<Checkbox onChange={checkHandler} onClick={handleEggsChange} checked={eggsChecked}  size='large'/>} label="No Eggs"/>
-      <FormControlLabel className='checkBox' control={<Checkbox onChange={checkHandler} onClick={handleDairyChange} checked={dairyChecked} size='large'/>} label="No Dairy"/>
-      </FormGroup>
+    <div> Selected Value: {checkedValues.join(", ")}</div>
+      <div className='checkBox'> 
+     <label>  <input type="checkbox" checked={allChecked} onChange={handleAllChange} size='large'/> Select All </label>
+      {itemList.map(({ value, id, }) => {
+        return <label>  <input type="checkbox" onChange={checkHandler} key={value} id={id} checked={checkedValues.includes(value)} size='large' placeholder={value}/> {value} </label>
+      })}
+      </div>
       </>
   );
 }
